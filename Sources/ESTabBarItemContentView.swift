@@ -68,6 +68,12 @@ open class ESTabBarItemContentView: UIView {
     /// A Boolean value indicating whether the item is highlighted, default is `NO`.
     open var highlighted = false
     
+    /// Text size, default is `UIScreen.main.scale == 3.0 ? 13.0 : 12.0`.
+    open var textSize = UIScreen.main.scale == 3.0 ? 13.0 : 12.0
+    
+    /// Icon size, default is `UIScreen.main.scale == 3.0 ? 23.0 : 20.0`.
+    open var iconSize = UIScreen.main.scale == 3.0 ? 23.0 : 20.0
+    
     /// Text color, default is `UIColor(white: 0.57254902, alpha: 1.0)`.
     open var textColor = UIColor(white: 0.57254902, alpha: 1.0) {
         didSet {
@@ -234,50 +240,41 @@ open class ESTabBarItemContentView: UIView {
         titleLabel.isHidden = (titleLabel.text == nil)
 
         if self.itemContentMode == .alwaysTemplate {
-            var s: CGFloat = 0.0 // image size
-            var f: CGFloat = 0.0 // font
             var isLandscape = false
             if let keyWindow = UIApplication.shared.keyWindow {
                 isLandscape = keyWindow.bounds.width > keyWindow.bounds.height
             }
             let isWide = isLandscape || traitCollection.horizontalSizeClass == .regular // is landscape or regular
-            if #available(iOS 11.0, *), isWide {
-                s = UIScreen.main.scale == 3.0 ? 23.0 : 20.0
-                f = UIScreen.main.scale == 3.0 ? 13.0 : 12.0
-            } else {
-                s = 23.0
-                f = 10.0
-            }
             
             if !imageView.isHidden && !titleLabel.isHidden {
-                titleLabel.font = UIFont.systemFont(ofSize: f)
+                titleLabel.font = UIFont.systemFont(ofSize: textSize)
                 titleLabel.sizeToFit()
                 if #available(iOS 11.0, *), isWide {
                     titleLabel.frame = CGRect.init(x: (w - titleLabel.bounds.size.width) / 2.0 + (UIScreen.main.scale == 3.0 ? 14.25 : 12.25) + titlePositionAdjustment.horizontal,
                                                    y: (h - titleLabel.bounds.size.height) / 2.0 + titlePositionAdjustment.vertical,
                                                    width: titleLabel.bounds.size.width,
                                                    height: titleLabel.bounds.size.height)
-                    imageView.frame = CGRect.init(x: titleLabel.frame.origin.x - s - (UIScreen.main.scale == 3.0 ? 6.0 : 5.0),
-                                                  y: (h - s) / 2.0,
-                                                  width: s,
-                                                  height: s)
+                    imageView.frame = CGRect.init(x: titleLabel.frame.origin.x - iconSize - (UIScreen.main.scale == 3.0 ? 6.0 : 5.0),
+                                                  y: (h - iconSize) / 2.0,
+                                                  width: iconSize,
+                                                  height: iconSize)
                 } else {
                     titleLabel.frame = CGRect.init(x: (w - titleLabel.bounds.size.width) / 2.0 + titlePositionAdjustment.horizontal,
                                                    y: h - titleLabel.bounds.size.height - 1.0 + titlePositionAdjustment.vertical,
                                                    width: titleLabel.bounds.size.width,
                                                    height: titleLabel.bounds.size.height)
-                    imageView.frame = CGRect.init(x: (w - s) / 2.0,
-                                                  y: (h - s) / 2.0 - 6.0,
-                                                  width: s,
-                                                  height: s)
+                    imageView.frame = CGRect.init(x: (w - iconSize) / 2.0,
+                                                  y: (h - iconSize) / 2.0 - 6.0,
+                                                  width: iconSize,
+                                                  height: iconSize)
                 }
             } else if !imageView.isHidden {
-                imageView.frame = CGRect.init(x: (w - s) / 2.0,
-                                              y: (h - s) / 2.0,
-                                              width: s,
-                                              height: s)
+                imageView.frame = CGRect.init(x: (w - iconSize) / 2.0,
+                                              y: (h - iconSize) / 2.0,
+                                              width: iconSize,
+                                              height: iconSize)
             } else if !titleLabel.isHidden {
-                titleLabel.font = UIFont.systemFont(ofSize: f)
+                titleLabel.font = UIFont.systemFont(ofSize: textSize)
                 titleLabel.sizeToFit()
                 titleLabel.frame = CGRect.init(x: (w - titleLabel.bounds.size.width) / 2.0 + titlePositionAdjustment.horizontal,
                                                y: (h - titleLabel.bounds.size.height) / 2.0 + titlePositionAdjustment.vertical,
