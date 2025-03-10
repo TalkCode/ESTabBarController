@@ -48,14 +48,20 @@ open class ESTabBarItemContentView: UIView {
     /// The image used to represent the item, default is `nil`
     open var image: UIImage? {
         didSet {
-            if !selected { self.updateDisplay() }
+            if !selected {
+                imageView.image = image
+                self.updateDisplay()
+            }
         }
     }
     
     /// The image displayed when the tab bar item is selected, default is `nil`.
     open var selectedImage: UIImage? {
         didSet {
-            if selected { self.updateDisplay() }
+            if selected {
+                imageView.image = selectedImage
+                self.updateDisplay()
+            }
         }
     }
     
@@ -68,11 +74,20 @@ open class ESTabBarItemContentView: UIView {
     /// A Boolean value indicating whether the item is highlighted, default is `NO`.
     open var highlighted = false
     
-    /// Text size, default is `UIScreen.main.scale == 3.0 ? 13.0 : 12.0`.
+    /// Text size, When textFont is set, textsize is invalid, default is `UIScreen.main.scale == 3.0 ? 13.0 : 12.0`.
     open var textSize = UIScreen.main.scale == 3.0 ? 13.0 : 12.0
+    
+    /// Text font, default is `UIFont.systemFont(ofSize: textSize)`.
+    open var textFont: UIFont?
     
     /// Icon size, default is `UIScreen.main.scale == 3.0 ? 23.0 : 20.0`.
     open var iconSize = UIScreen.main.scale == 3.0 ? 23.0 : 20.0
+    
+    /// Direct spacing between icon and text, default is `6.0`.
+    open var spacing = 6.0
+    
+    /// Height from top.
+    open var topHeight: CGFloat?
     
     /// Text color, default is `UIColor(white: 0.57254902, alpha: 1.0)`.
     open var textColor = UIColor(white: 0.57254902, alpha: 1.0) {
@@ -235,6 +250,7 @@ open class ESTabBarItemContentView: UIView {
     open func updateLayout() {
         let w = self.bounds.size.width
         let h = self.bounds.size.height
+        let topHeight = topHeight != nil ? topHeight! : (h - iconSize) / 2.0
         
         imageView.isHidden = (imageView.image == nil)
         titleLabel.isHidden = (titleLabel.text == nil)
@@ -247,7 +263,7 @@ open class ESTabBarItemContentView: UIView {
             let isWide = isLandscape || traitCollection.horizontalSizeClass == .regular // is landscape or regular
             
             if !imageView.isHidden && !titleLabel.isHidden {
-                titleLabel.font = UIFont.systemFont(ofSize: textSize)
+                titleLabel.font = textFont != nil ? textFont! : UIFont.systemFont(ofSize: textSize)
                 titleLabel.sizeToFit()
                 if #available(iOS 11.0, *), isWide {
                     titleLabel.frame = CGRect.init(x: (w - titleLabel.bounds.size.width) / 2.0 + (UIScreen.main.scale == 3.0 ? 14.25 : 12.25) + titlePositionAdjustment.horizontal,
@@ -255,7 +271,7 @@ open class ESTabBarItemContentView: UIView {
                                                    width: titleLabel.bounds.size.width,
                                                    height: titleLabel.bounds.size.height)
                     imageView.frame = CGRect.init(x: titleLabel.frame.origin.x - iconSize - (UIScreen.main.scale == 3.0 ? 6.0 : 5.0),
-                                                  y: (h - iconSize) / 2.0,
+                                                  y: topHeight,
                                                   width: iconSize,
                                                   height: iconSize)
                 } else {
@@ -264,17 +280,17 @@ open class ESTabBarItemContentView: UIView {
                                                    width: titleLabel.bounds.size.width,
                                                    height: titleLabel.bounds.size.height)
                     imageView.frame = CGRect.init(x: (w - iconSize) / 2.0,
-                                                  y: (h - iconSize) / 2.0 - 6.0,
+                                                  y: topHeight - 6.0,
                                                   width: iconSize,
                                                   height: iconSize)
                 }
             } else if !imageView.isHidden {
                 imageView.frame = CGRect.init(x: (w - iconSize) / 2.0,
-                                              y: (h - iconSize) / 2.0,
+                                              y: topHeight,
                                               width: iconSize,
                                               height: iconSize)
             } else if !titleLabel.isHidden {
-                titleLabel.font = UIFont.systemFont(ofSize: textSize)
+                titleLabel.font = textFont != nil ? textFont! : UIFont.systemFont(ofSize: textSize)
                 titleLabel.sizeToFit()
                 titleLabel.frame = CGRect.init(x: (w - titleLabel.bounds.size.width) / 2.0 + titlePositionAdjustment.horizontal,
                                                y: (h - titleLabel.bounds.size.height) / 2.0 + titlePositionAdjustment.vertical,
@@ -293,6 +309,7 @@ open class ESTabBarItemContentView: UIView {
             }
         } else {
             if !imageView.isHidden && !titleLabel.isHidden {
+                titleLabel.font = textFont != nil ? textFont! : UIFont.systemFont(ofSize: textSize)
                 titleLabel.sizeToFit()
                 imageView.sizeToFit()
                 titleLabel.frame = CGRect.init(x: (w - titleLabel.bounds.size.width) / 2.0 + titlePositionAdjustment.horizontal,
@@ -300,13 +317,14 @@ open class ESTabBarItemContentView: UIView {
                                                width: titleLabel.bounds.size.width,
                                                height: titleLabel.bounds.size.height)
                 imageView.frame = CGRect.init(x: (w - imageView.bounds.size.width) / 2.0,
-                                              y: (h - imageView.bounds.size.height) / 2.0 - 6.0,
+                                              y: topHeight - 6.0,
                                               width: imageView.bounds.size.width,
                                               height: imageView.bounds.size.height)
             } else if !imageView.isHidden {
                 imageView.sizeToFit()
                 imageView.center = CGPoint.init(x: w / 2.0, y: h / 2.0)
             } else if !titleLabel.isHidden {
+                titleLabel.font = textFont != nil ? textFont! : UIFont.systemFont(ofSize: textSize)
                 titleLabel.sizeToFit()
                 titleLabel.center = CGPoint.init(x: w / 2.0, y: h / 2.0)
             }
