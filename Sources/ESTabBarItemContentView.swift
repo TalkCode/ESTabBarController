@@ -48,20 +48,14 @@ open class ESTabBarItemContentView: UIView {
     /// The image used to represent the item, default is `nil`
     open var image: UIImage? {
         didSet {
-            if !selected {
-                imageView.image = image
-                self.updateDisplay()
-            }
+            if !selected {  self.updateDisplay()  }
         }
     }
     
     /// The image displayed when the tab bar item is selected, default is `nil`.
     open var selectedImage: UIImage? {
         didSet {
-            if selected {
-                imageView.image = selectedImage
-                self.updateDisplay()
-            }
+            if selected {  self.updateDisplay()  }
         }
     }
     
@@ -313,11 +307,11 @@ open class ESTabBarItemContentView: UIView {
                 titleLabel.sizeToFit()
                 imageView.sizeToFit()
                 titleLabel.frame = CGRect.init(x: (w - titleLabel.bounds.size.width) / 2.0 + titlePositionAdjustment.horizontal,
-                                               y: h - titleLabel.bounds.size.height - 1.0 + titlePositionAdjustment.vertical,
+                                               y: imageView.frame.maxY + spacing + titlePositionAdjustment.vertical,
                                                width: titleLabel.bounds.size.width,
                                                height: titleLabel.bounds.size.height)
                 imageView.frame = CGRect.init(x: (w - imageView.bounds.size.width) / 2.0,
-                                              y: topHeight - 6.0,
+                                              y: topHeight,
                                               width: imageView.bounds.size.width,
                                               height: imageView.bounds.size.height)
             } else if !imageView.isHidden {
